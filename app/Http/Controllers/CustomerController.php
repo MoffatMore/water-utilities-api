@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Feedback;
 use App\MeterReadings;
 use App\ReportLeakage;
 use App\RequestBill;
@@ -21,7 +22,7 @@ class CustomerController extends Controller
             'leakage_location'=> $request->leakage_location,
             'physical_address'=> $request->physical_address
         ]);
-        return response()->json(['success','Successfully reported meter leakage!']);
+        return response()->json(['success'=>'Successfully reported meter leakage!']);
     }
 
     public function submit_meter_reading(Request $request){
@@ -62,6 +63,23 @@ class CustomerController extends Controller
     public function pay_bill(Request $request){
 
     }
+
+    public function get_feedback(Request $request)
+    {
+        $feedback = Feedback::where([
+            'customer_id'=> $request->customer_id,
+            'utility_num'=>$request->utility_num
+        ])->get();
+
+        if ($feedback){
+            return response()->json(['success'=>$feedback]);
+        }
+        else{
+            return response()->json(['fail'=>'No feedback at the moment']);
+        }
+
+    }
+
 
 
 

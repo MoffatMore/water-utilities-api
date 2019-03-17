@@ -84,8 +84,7 @@ class AuthController extends Controller
 
         if(!Auth::attempt($credentials))
             return response()->json([
-                'fail'=>'Incorrect credentials!',
-                'message' => 'Unauthorized'
+                'fail'=>'Incorrect credentials!'
             ]);
 
         $user = $request->user();
