@@ -7,6 +7,7 @@ use App\MeterReadings;
 use App\ReportLeakage;
 use App\RequestBill;
 use Illuminate\Http\Request;
+use App\MeterConnection;
 
 class CustomerController extends Controller
 {
@@ -27,10 +28,6 @@ class CustomerController extends Controller
 
     public function submit_meter_reading(Request $request){
 
-//        if ($request->hasFile('photo'))
-//        {
-//            return response()->json(['success'=>'Successfully submitted meter reading!']);
-//        }
         MeterReadings::create([
             'customer_num'=>  $request->customer_num,
             'utility_num'=> $request->utility_num,
@@ -80,11 +77,41 @@ class CustomerController extends Controller
 
     }
 
-
-
-
-
-
-
-
+    public function new_connection(Request $request)
+    {
+        MeterConnection::create([
+            'water_type'=> $request->water_type,
+            'ownership' => $request->ownership,
+            'meter_location'=> $request->meter_location,
+            'name' => $request->name,
+            'middle' => $request->middle,
+            'surname' => $request->surname,
+            'customer_num' => $request->customer_num,
+            'email' => $request->email,
+            'utility_num' => $request->utility_num,
+            'marital_status' => $request->marital_status,
+            'dob' => $request->dob,
+            'identity' => $request->identity,
+            'identity_num' => $request->identity_num,
+            'plot_location' => $request->plot_location,
+            'postal_address' => $request->postal_address,
+            'tel_home' => $request->tel_home,
+            'tel_work' => $request->tel_work,
+            'plot_no' => $request->plot_no,
+            'cell' => $request->cell,
+            'ward' => $request->ward,
+            'location' => $request->location,
+            'owner_name' => $request->owner_name,
+            'owner_middle' => $request->owner_middle,
+            'owner_email' => $request->owner_email,
+            'owner_identity_no' => $request->owner_identity_no,
+            'owner_identity' => $request->owner_identity,
+            'owner_surname' => $request->owner_surname,
+            'owner_tel' => $request->owner_tel,
+            'owner_cell' => $request->owner_cell,
+            'owner_fax' => $request->owner_fax,
+            'lease' => $request->lease,
+        ]);
+        return response()->json(['success'=>'Successfully requested meter connection!']);
+    }
 }

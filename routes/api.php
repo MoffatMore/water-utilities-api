@@ -36,12 +36,11 @@ Route::group(['prefix' => 'auth'], function () {
         Route::get('/details', 'AuthController@userDetails');
         Route::get('logout', 'AuthController@logout');
         Route::get('user', 'AuthController@user');
-
         //
         Route::post('/request-bill', 'CustomerController@request_bill');
         Route::post('/request-feedback', 'CustomerController@get_feedback');
         Route::post('/report-leakage', 'CustomerController@submit_leakage');
         Route::post('/submit-meter-reading', 'CustomerController@submit_meter_reading');
-
+        Route::post('/meter-connection', 'CustomerController@new_connection');
     });
 
