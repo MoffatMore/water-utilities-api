@@ -13,7 +13,7 @@ class CustomerController extends Controller
 {
     //
 
-    public function submit_leakage(Request $request){
+    public function submitLeakage(Request $request){
 
         ReportLeakage::create([
             'name'=>  $request->name,
@@ -26,7 +26,7 @@ class CustomerController extends Controller
         return response()->json(['success'=>'Successfully reported meter leakage!']);
     }
 
-    public function submit_meter_reading(Request $request){
+    public function submitMeterReading(Request $request){
 
         MeterReadings::create([
             'customer_num'=>  $request->customer_num,
@@ -39,7 +39,7 @@ class CustomerController extends Controller
         return response()->json(['success'=>'Successfully submitted meter reading!']);
     }
 
-    public function request_bill(Request $request)
+    public function requestBill(Request $request)
     {
         $customer_num = $request->customer_num;
         $utility_num =  $request->utility_num;
@@ -52,16 +52,14 @@ class CustomerController extends Controller
         if ($bill){
             return response()->json(['success'=>$bill]);
         }
-        else{
-            return response()->json(['fail'=>'No record of bill!']);
-        }
+        return response()->json(['fail'=>'No record of bill!']);
     }
 
-    public function pay_bill(Request $request){
-
+    public function payBill(Request $request){
+        return $request;
     }
 
-    public function get_feedback(Request $request)
+    public function getFeedback(Request $request)
     {
         $feedback = Feedback::where([
             'customer_id'=> $request->customer_id,
@@ -71,13 +69,11 @@ class CustomerController extends Controller
         if ($feedback){
             return response()->json(['success'=>$feedback]);
         }
-        else{
-            return response()->json(['fail'=>'No feedback at the moment']);
-        }
+        return response()->json(['fail'=>'No feedback at the moment']);
 
     }
 
-    public function new_connection(Request $request)
+    public function newConnection(Request $request)
     {
         MeterConnection::create([
             'water_type'=> $request->water_type,
@@ -113,5 +109,11 @@ class CustomerController extends Controller
             'lease' => $request->lease,
         ]);
         return response()->json(['success'=>'Successfully requested meter connection!']);
+    }
+
+    public function getMeterReadings()
+    {
+        $meterReadings = MeterReadings::all();
+        return response()->json($meterReadings);
     }
 }
