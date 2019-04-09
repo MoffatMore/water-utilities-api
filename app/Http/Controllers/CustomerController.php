@@ -12,7 +12,12 @@ use App\MeterConnection;
 class CustomerController extends Controller
 {
     //
+    public const BILL_PER_LITER = 0.55;
 
+    public function __construct()
+    {
+
+    }
     public function submitLeakage(Request $request){
 
         ReportLeakage::create([
@@ -115,5 +120,48 @@ class CustomerController extends Controller
     {
         $meterReadings = MeterReadings::all();
         return response()->json($meterReadings);
+    }
+
+    public function calculateBill(Request $request)
+    {
+        $customer_num = $request->customer_num;
+        $utility_num = $request->utility_num;
+        $bills = MeterReadings::where([
+            'customer_num'=> $customer_num,
+            'utility_num'=>$utility_num
+            ])
+            ->orderBy('id', 'DESC')
+            ->get();
+        $billCollection = collect($bills);
+        $filtered = $billCollection->whereNotIn('meter_reading',[$request->meter_reading]);
+        $filtered = $filtered->max();
+        $billAmount = 0;
+        if($filtered)
+        {
+            $meterReading = $filtered->meter_reading;
+            $newMeterReading = $request->meter_reading;
+            $liters =  $newMeterReading - $meterReading;
+            $liters = substr($liters,4,8);
+            $billAmount = $liters * 0.55;
+            $billAmount = round($billAmount, 2);
+
+        }
+        else{
+            $newMeterReading = $request->meter_reading;
+            $liters =  $newMeterReading;
+            $liters = substr($liters,4,8);
+            $billAmount = $liters * 0.55;
+            $billAmount = round($billAmount, 2);
+
+        }
+        RequestBill::create([
+            'customer_num'=> $customer_num,
+            'utility_num'=>$utility_num,
+            'bill_amount'=>$billAmount,
+            'bill_status'=>0
+            ]);
+        MeterReadings::find($request->id)->delete();
+        return response()->json(['success'=>'Successfully approved meter reading for customer '.$customer_num]);
+
     }
 }
