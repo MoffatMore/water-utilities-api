@@ -160,7 +160,10 @@ class CustomerController extends Controller
             'bill_amount'=>$billAmount,
             'bill_status'=>0
             ]);
-        MeterReadings::find($request->id)->delete();
+        MeterReadings::where([
+            'customer_num'=> $customer_num,
+            'utility_num'=>$utility_num
+        ])->delete();
         return response()->json(['success'=>'Successfully approved meter reading for customer '.$customer_num]);
 
     }
