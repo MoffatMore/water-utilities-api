@@ -148,8 +148,7 @@ class CustomerController extends Controller
         }
         else{
             $newMeterReading = $request->meter_reading;
-            $liters =  $newMeterReading;
-            $liters = substr($liters,4,8);
+            $liters = substr($newMeterReading,4,8);
             $billAmount = $liters * 0.55;
             $billAmount = round($billAmount, 2);
 
