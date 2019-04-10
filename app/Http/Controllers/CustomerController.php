@@ -126,6 +126,11 @@ class CustomerController extends Controller
     {
         $customer_num = $request->customer_num;
         $utility_num = $request->utility_num;
+        return response()->json([
+            'customer_num'=>$customer_num,
+            'utility_num'=>$utility_num
+            ]
+        );
         $bills = MeterReadings::where([
             'customer_num'=> $customer_num,
             'utility_num'=>$utility_num
