@@ -119,7 +119,7 @@ class CustomerController extends Controller
     public function getMeterReadings()
     {
         $meterReadings = MeterReadings::all();
-        return response()->json($meterReadings);
+        return response()->json(['meter_readings'=>$meterReadings]);
     }
 
     public function calculateBill(Request $request)
