@@ -46,6 +46,6 @@ Route::group(['prefix' => 'auth'], function () {
         Route::post('/submit-meter-reading', 'CustomerController@submitMeterReading');
         Route::post('/meter-connection', 'CustomerController@newConnection');
         Route::post('/bill','CustomerController@calculateBill');
-        Route::post('/submit-meter-reading', 'CustomerController@getMeterReadings');
+        Route::post('/retrieve-meter-reading', 'CustomerController@getMeterReadings');
     });
 
