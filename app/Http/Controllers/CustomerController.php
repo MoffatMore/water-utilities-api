@@ -40,9 +40,9 @@ class CustomerController extends Controller
         $folderPath = "meter_readings/";
         $file = $folderPath . uniqid() . '.png';
         Storage::disk('public')->put(
-            $request->meter_reading . 'png',$data
+            $request->meter_reading . '.png',$data
         );
-        $url = Storage::url($request->meter_reading . 'png');
+        $url = Storage::url($request->meter_reading . '.png');
         MeterReadings::create([
             'customer_num'=>  $request->customer_num,
             'utility_num'=> $request->utility_num,
