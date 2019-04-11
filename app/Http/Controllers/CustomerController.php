@@ -8,6 +8,7 @@ use App\ReportLeakage;
 use App\RequestBill;
 use Illuminate\Http\Request;
 use App\MeterConnection;
+use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
@@ -32,13 +33,21 @@ class CustomerController extends Controller
     }
 
     public function submitMeterReading(Request $request){
-
+        $img = base64_decode($request->photo);
+        $img = str_replace('data:image/png;base64,', '', $img);
+        $img = str_replace(' ', '+', $img);
+        $data = base64_decode($img);
+        $ext = $data->getClientOriginalExtension();
+        Storage::putFileAs(
+            'meter_readings',$data,$request->meter_reading.$ext
+        );
+        $url = Storage::url(meter_reading.$ext);
         MeterReadings::create([
             'customer_num'=>  $request->customer_num,
             'utility_num'=> $request->utility_num,
             'meter_reading'=> $request->meter_reading,
             'cell_no' => $request->cell_no,
-            'meter_reading_file_upload'=> $request->photo
+            'meter_reading_file_upload'=> $url
         ]);
 
         return response()->json(['success'=>'Successfully submitted meter reading!']);
