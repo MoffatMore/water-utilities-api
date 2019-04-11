@@ -37,9 +37,8 @@ class CustomerController extends Controller
         $img = str_replace('data:image/png;base64,', '', $img);
         $img = str_replace(' ', '+', $img);
         $data = base64_decode($img);
-        $ext = $data->getClientOriginalExtension();
         Storage::putFileAs(
-            'meter_readings',$data,$request->meter_reading.$ext
+            'meter_readings',$data,$request->meter_reading . 'png'
         );
         $url = Storage::url(meter_reading.$ext);
         MeterReadings::create([
