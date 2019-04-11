@@ -53,6 +53,7 @@ class AuthController extends Controller
             'identity'=> $request->identity,
             'identity_num'=> $request->identity_num,
             'postal_address'=> $request->postal_address,
+            'mode'=>0,
             'tel'=> $request->tel,
             'cell'=> $request->cell
         ]);
