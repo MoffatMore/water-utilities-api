@@ -27,26 +27,19 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('login', 'AuthController@login');
     Route::post('register', 'AuthController@signup');
 });
-;
 
-    Route::group([
-        'middleware' => 'auth:api'
-    ],
-        function() {
-        //Get routes
-        Route::get('/details', 'AuthController@userDetails');
-        Route::get('logout', 'AuthController@logout');
-        Route::get('user', 'AuthController@user');
+//Get routes
+Route::get('/details', 'AuthController@userDetails');
+Route::get('logout', 'AuthController@logout');
+Route::get('user', 'AuthController@user');
+//Post routes
+Route::post('/request-bill', 'CustomerController@requestBill');
+Route::post('/request-feedback', 'CustomerController@getFeedback');
+Route::post('/report-leakage', 'CustomerController@submitLeakage');
+Route::post('/submit-meter-reading', 'CustomerController@submitMeterReading');
+Route::post('/meter-connection', 'CustomerController@newConnection');
+Route::post('/bill','CustomerController@calculateBill');
+Route::post('/retrieve-meter-reading', 'CustomerController@getMeterReadings');
+Route::post('/reports', 'CustomerController@getLeakageReports');
 
-
-        //Post routes
-        Route::post('/request-bill', 'CustomerController@requestBill');
-        Route::post('/request-feedback', 'CustomerController@getFeedback');
-        Route::post('/report-leakage', 'CustomerController@submitLeakage');
-        Route::post('/submit-meter-reading', 'CustomerController@submitMeterReading');
-        Route::post('/meter-connection', 'CustomerController@newConnection');
-        Route::post('/bill','CustomerController@calculateBill');
-        Route::post('/retrieve-meter-reading', 'CustomerController@getMeterReadings');
-        Route::post('/reports', 'CustomerController@getLeakageReports');
-    });
 
