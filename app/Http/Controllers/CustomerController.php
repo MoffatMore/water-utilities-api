@@ -42,7 +42,7 @@ class CustomerController extends Controller
         Storage::disk('public')->put(
             $request->meter_reading . 'png',$data
         );
-        $url = Storage::url($meter_reading.$ext);
+        $url = Storage::url($request->meter_reading.$ext);
         MeterReadings::create([
             'customer_num'=>  $request->customer_num,
             'utility_num'=> $request->utility_num,
