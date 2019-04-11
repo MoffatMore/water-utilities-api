@@ -101,6 +101,7 @@ class AuthController extends Controller
             'success'=>'Successfully logged in!',
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
+            'mode'=>$user->mode,
             'expires_at' => Carbon::parse(
                 $tokenResult->token->expires_at
             )->toDateTimeString()
