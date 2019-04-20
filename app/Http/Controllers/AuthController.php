@@ -54,7 +54,6 @@ class AuthController extends Controller
             'identity_num'=> $request->identity_num,
             'postal_address'=> $request->postal_address,
             'mode'=>0,
-            'tel'=> $request->tel,
             'cell'=> $request->cell
         ]);
 
@@ -103,6 +102,9 @@ class AuthController extends Controller
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
             'mode'=>$user->mode,
+            'customer_num'=>$user->customer_num,
+            'utility_num'=>$user->utility_num,
+            'cell'=>$user->cell,
             'expires_at' => Carbon::parse(
                 $tokenResult->token->expires_at
             )->toDateTimeString()

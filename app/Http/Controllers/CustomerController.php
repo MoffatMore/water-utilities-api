@@ -9,6 +9,9 @@ use App\RequestBill;
 use Illuminate\Http\Request;
 use App\MeterConnection;
 use Illuminate\Support\Facades\Storage;
+use thiagoalessio\TesseractOCR\TesseractOCR;
+use Illuminate\Support\Facades\File;
+
 
 class CustomerController extends Controller
 {
@@ -29,30 +32,86 @@ class CustomerController extends Controller
             'leakage_location'=> $request->leakage_location,
             'physical_address'=> $request->physical_address
         ]);
+
         return response()->json(['success'=>'Successfully reported meter leakage!']);
     }
 
+    public function processImage(Request $request){
+        if($request->photo){
+            $image = $request->photo;
+            $imageName = $request->file('photo')->getClientOriginalName();
+            Storage::disk('public')->put($imageName,$image);
+            exec("/Users/moffatmore/Desktop/tesseract/4.0.0_1/bin/tesseract $image $imageName");
+        }
+        $my_file = fopen($imageName.'.txt', 'r') or die("Unable to open file!");
+        $contents = fread($my_file, filesize($imageName.'.txt'));
+        $contents = preg_replace("/[^0-9]/", "", $contents);
+        $meterReadings = MeterReadings::where([
+            'meter_reading' => $imageName
+        ])->first();
+
+        $meter_reading = $meterReadings->meter_reading;
+        $results = strcmp($contents, $meter_reading);
+        if($results == 0)
+        {
+            $bills = MeterReadings::where([
+                'meter_reading' => $imageName
+                ])
+                ->orderBy('id', 'DESC')
+                ->get();
+            $billCollection = collect($bills);
+            $filtered = $billCollection->whereNotIn('meter_reading',[$meter_reading]);
+            $filtered = $filtered->max();
+            $billAmount = 0;
+            if($filtered)
+            {
+                $meterReading = $filtered->meter_reading;
+                $newMeterReading = $contents;
+                $liters =  $newMeterReading - $meterReading;
+                $liters = substr($liters,4,8);
+                $billAmount = $liters * 0.55;
+                $billAmount = round($billAmount, 2);
+    
+            }
+            else{
+                $newMeterReading = $contents;
+                $liters = substr($newMeterReading,4,8);
+                $billAmount = $liters * 0.55;
+                $billAmount = round($billAmount, 2);
+    
+            }
+            RequestBill::create([
+                'customer_num'=> $meterReadings->customer_num,
+                'utility_num'=>$meterReadings->utility_num,
+                'bill_amount'=>$billAmount,
+                'bill_status'=>0
+                ]);
+           
+            return response()->json(['success'=>'Successfully verified meter readings.']);
+
+        }else{
+            MeterReadings::where([
+                'customer_num'=> $meterReadings->customer_num,
+                'utility_num'=>$meterReadings->utility_num
+            ])->delete();
+            return response()->json(['failed'=>"Meter reading mismatch! \n ". $meter_reading . ' is not equivalent '. $contents]);
+
+        }
+        
+    }
     public function submitMeterReading(Request $request){
-        $img = base64_decode($request->photo);
-        $img = str_replace('data:image/png;base64,', '', $img);
-        $img = str_replace(' ', '+', $img);
-        $data = base64_decode($img);
-        $folderPath = "meter_readings/";
-        $file = $folderPath . uniqid() . '.png';
-        Storage::disk('public')->put(
-            $request->meter_reading . '.png',$data
-        );
-        $url = Storage::url($request->meter_reading . '.png');
+
         MeterReadings::create([
             'customer_num'=>  $request->customer_num,
             'utility_num'=> $request->utility_num,
             'meter_reading'=> $request->meter_reading,
             'cell_no' => $request->cell_no,
-            'meter_reading_file_upload'=> $url
+            'meter_reading_file_upload'=> ''
         ]);
 
         return response()->json(['success'=>'Successfully submitted meter reading!']);
     }
+
 
     public function requestBill(Request $request)
     {
@@ -97,31 +156,17 @@ class CustomerController extends Controller
             'name' => $request->name,
             'middle' => $request->middle,
             'surname' => $request->surname,
-            'customer_num' => $request->customer_num,
             'email' => $request->email,
-            'utility_num' => $request->utility_num,
             'marital_status' => $request->marital_status,
             'dob' => $request->dob,
             'identity' => $request->identity,
             'identity_num' => $request->identity_num,
             'plot_location' => $request->plot_location,
             'postal_address' => $request->postal_address,
-            'tel_home' => $request->tel_home,
-            'tel_work' => $request->tel_work,
             'plot_no' => $request->plot_no,
             'cell' => $request->cell,
             'ward' => $request->ward,
-            'location' => $request->location,
-            'owner_name' => $request->owner_name,
-            'owner_middle' => $request->owner_middle,
-            'owner_email' => $request->owner_email,
-            'owner_identity_no' => $request->owner_identity_no,
-            'owner_identity' => $request->owner_identity,
-            'owner_surname' => $request->owner_surname,
-            'owner_tel' => $request->owner_tel,
-            'owner_cell' => $request->owner_cell,
-            'owner_fax' => $request->owner_fax,
-            'lease' => $request->lease,
+        
         ]);
         return response()->json(['success'=>'Successfully requested meter connection!']);
     }
@@ -145,6 +190,7 @@ class CustomerController extends Controller
             'utility_num'=>$utility_num
             ]
         );
+        
         $bills = MeterReadings::where([
             'customer_num'=> $customer_num,
             'utility_num'=>$utility_num

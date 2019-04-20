@@ -76,8 +76,7 @@ class RegisterController extends Controller
             'identity'=> $data['identity'],
             'identity_num'=> $data['identity_num'],
             'postal_address'=> $data['postal_address'],
-            'tel'=> $data['tel'],
-            'cell'=> $data['cell'],
+            'cell'=> $data['cell']
         ]);
     }
 }

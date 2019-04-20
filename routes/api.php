@@ -32,6 +32,7 @@ Route::group(['prefix' => 'auth'], function () {
 Route::get('/details', 'AuthController@userDetails');
 Route::get('logout', 'AuthController@logout');
 Route::get('user', 'AuthController@user');
+Route::post('image','CustomerController@processImage');
 //Post routes
 Route::post('/request-bill', 'CustomerController@requestBill');
 Route::post('/request-feedback', 'CustomerController@getFeedback');
