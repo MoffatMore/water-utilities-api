@@ -138,10 +138,11 @@ class CustomerController extends Controller
         $feedback = Feedback::where([
             'customer_id'=> $request->customer_id,
             'utility_num'=>$request->utility_num
-        ])->get();
+        ])->with('leakage')->get();
+        // $leakage =  ReportLeakage::find($feedback->leakage_id)->first();
 
         if ($feedback){
-            return response()->json(['success'=>$feedback]);
+            return response()->json(['success'=>$feedback,]);
         }
         return response()->json(['fail'=>'No feedback at the moment']);
 
