@@ -41,7 +41,7 @@ class CustomerController extends Controller
             $image = $request->photo;
             $imageName = $request->file('photo')->getClientOriginalName();
             Storage::disk('public')->put($imageName,$image);
-            exec("/Users/moffatmore/Desktop/tesseract/4.0.0_1/bin/tesseract $image $imageName");
+            exec("tesseract $image $imageName");
         }
         $my_file = fopen($imageName.'.txt', 'r') or die("Unable to open file!");
         $contents = fread($my_file, filesize($imageName.'.txt'));
