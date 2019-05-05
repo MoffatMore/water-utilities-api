@@ -40,14 +40,24 @@ class AuthController extends Controller
         {
             return response()->json(['error'=>$validator->errors()],401);
         }
+        $customer_num = $request->customer_num;
+        $utility_num = $request->utility_num;
 
+        if ($customer_num == '')
+        {
+            $customer_num = str_random(8);
+        }
+        if ($utility_num == '')
+        {
+            $utility_num = str_random(8);
+        }
         User::create([
             'name'=> $request->name,
             'surname'=> $request->surname,
             'email'=> $request->email,
             'password'=> Hash::make($request->password),
-            'customer_num'=> $request->customer_num,
-            'utility_num'=> $request->utility_num,
+            'customer_num'=> $customer_num,
+            'utility_num'=> $utility_num,
             'plot_num'=> $request->plot_num,
             'plot_location'=> $request->plot_location,
             'identity'=> $request->identity,
